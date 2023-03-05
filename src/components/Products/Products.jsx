@@ -1,8 +1,10 @@
-
+import { Grid } from "@mui/material"
 
 const Products = () => {
   return (
-    <div>Products</div>
+    <main>
+      Products
+    </main>
   )
 }
 

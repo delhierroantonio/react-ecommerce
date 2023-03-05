@@ -1,0 +1,19 @@
+.appbar {
+  border-radius: .2rem;
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+
+    &__logo {
+      text-decoration: none;
+    }
+    &__cart {
+        color: inherit;
+    }
+    &__right {
+      display: flex;
+      gap: 1.2rem;
+    }
+  }
+}
