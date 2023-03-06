@@ -2,7 +2,7 @@ import Product from './Product/Product'
 import { Grid, Typography } from "@mui/material"
 import { Container } from "@mui/system"
 
-const Products = ({ products }) => {
+const Products = ({ products, addToCart }) => {
   return (
     <main>
       <Container>
@@ -10,7 +10,7 @@ const Products = ({ products }) => {
         <Grid container justifyContent='center' justifyItems='center' spacing={2}>
           {products.map((item) => (
             <Grid item key={item.id} xs={12} sm={6} md={4} lg={3}>
-              <Product item={item} />
+              <Product item={item} addToCart={addToCart} />
             </Grid>
           ))}
         </Grid>

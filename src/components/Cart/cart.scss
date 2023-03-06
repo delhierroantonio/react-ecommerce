@@ -1,0 +1,12 @@
+.cart {
+  &__title {
+  }
+  &__title--empty {
+    display: block;
+    text-decoration: none;
+    color: #57aace;
+    .beer-icon {
+      width: 18px;
+    }
+  }
+}

@@ -6,7 +6,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import './product.scss'
 
 
-const Product = ({ item }) => {
+const Product = ({ item, addToCart }) => {
   return (
     <Card className="card" raised >
         <img className="card__img" src={item.image.url} alt={item.name} />
@@ -25,7 +25,7 @@ const Product = ({ item }) => {
           <IconButton>
             <FavoriteIcon className="likeIcon" />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => addToCart(item.id, 1)}>
             <ShoppingBag className="addIcon" />
           </IconButton>
         </div>
