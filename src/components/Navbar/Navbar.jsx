@@ -2,8 +2,7 @@ import { AppBar, Toolbar, Typography, useMediaQuery, IconButton, Badge, CssBasel
 import { Link } from "react-router-dom"
 // icons
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
-import ShoppingBagRoundedIcon from '@mui/icons-material/ShoppingBagRounded';
-import MenuIcon from '@mui/icons-material/Menu';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 // css
@@ -21,16 +20,24 @@ const Navbar = () => {
         </IconButton> */}
         {/* middle */}
         <Link className="toolbar__logo" to='/'>
-          <Typography color='textSecondary' variant="body">Headless Ecommerce</Typography>
+          <Typography color='textSecondary' variant="body">Beer Co.</Typography>
         </Link>
         {/* right */}
         <div className="toolbar__right">
           <IconButton>
-            <Badge className="toolbar__cart" badgeContent={2} color='info' component={Link} to='/cart'>
+            <FavoriteIcon color="textSecondary" />
+          </IconButton>
+          <IconButton>
+            <Badge 
+              className="toolbar__cart" 
+              component={Link} 
+              to='/cart' 
+              sx={{"& .MuiBadge-badge": {color: 'white', backgroundColor: '#79caee'}}}
+              badgeContent={2}>
               <ShoppingCartRoundedIcon color="textSecondary" />
             </Badge>
           </IconButton>
-            <DrawerComponent />
+          <DrawerComponent />
         </div>
       </Toolbar>
     </AppBar>

@@ -1,0 +1,83 @@
+.card {
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  max-width: 30rem; 
+  height: 30rem;
+  &__img {
+    width: 100%;
+    height: 16rem;
+    object-fit: cover;
+    padding: .5em;
+    border-radius: .7rem;
+  }
+  &__price {
+    color: #404549;
+  }
+  .addIcon {
+    -webkit-transition: -webkit-transform ease-out 0.1s, background 0.2s;
+    -moz-transition: -moz-transform ease-out 0.1s, background 0.2s;
+    transition: transform ease-out 0.1s, background 0.2s;
+
+    &:hover {
+      color: #79cbee;
+      -webkit-transform: scale(0.93);
+      -moz-transform: scale(0.93);
+      -ms-transform: scale(0.93);
+      transform: scale(0.93);
+      // color: #fff;
+
+      &::after {
+        -webkit-animation: sonarEffect 1.1s ease-out 75ms;
+        -moz-animation: sonarEffect 1.1s ease-out 75ms;
+        animation: sonarEffect 1.1s ease-out 75ms;
+      }
+    }
+
+    &::after {
+      top: 0;
+      left: 0;
+      padding: 0;
+      z-index: -1;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+      opacity: 0;
+      -webkit-transform: scale(0.9);
+      -moz-transform: scale(0.9);
+      -ms-transform: scale(0.9);
+      transform: scale(0.9);
+    }
+  }
+
+  .likeIcon {
+    -webkit-transition: -webkit-transform ease-out 0.1s, background 0.2s;
+    -moz-transition: -moz-transform ease-out 0.1s, background 0.2s;
+    transition: transform ease-out 0.1s, background 0.2s;
+
+    &:hover {
+      color: #ff006e;
+      -webkit-transform: scale(0.93);
+      -moz-transform: scale(0.93);
+      -ms-transform: scale(0.93);
+      transform: scale(0.93);
+
+      &::after {
+        -webkit-animation: sonarEffect 1.1s ease-out 75ms;
+        -moz-animation: sonarEffect 1.1s ease-out 75ms;
+        animation: sonarEffect 1.1s ease-out 75ms;
+      }
+    }
+
+    &::after {
+      top: 0;
+      left: 0;
+      padding: 0;
+      z-index: -1;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+      opacity: 0;
+      -webkit-transform: scale(0.9);
+      -moz-transform: scale(0.9);
+      -ms-transform: scale(0.9);
+      transform: scale(0.9);
+    }
+  }
+}

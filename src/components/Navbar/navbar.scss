@@ -1,5 +1,6 @@
 .appbar {
   border-radius: .2rem;
+  margin-bottom: 2rem;
   .toolbar {
     display: flex;
     justify-content: space-between;
@@ -7,6 +8,12 @@
 
     &__logo {
       text-decoration: none;
+      :only-child {
+        color: #79cbee;
+        font-size: 1.2rem;
+        font-weight: bold;
+        letter-spacing: .2rem;
+      }
     }
     &__cart {
         color: inherit;
