@@ -1,12 +1,14 @@
 .cart {
-  &__title {
-  }
-  &__title--empty {
+  min-height: 90vh;
+  .empty__link {
     display: block;
+    color: #79cbee;
     text-decoration: none;
-    color: #57aace;
-    .beer-icon {
-      width: 18px;
+  }
+  .checkout__button {
+    background-color: #65bce2;
+    &:hover {
+      background-color: #54a8cd;
     }
   }
 }

@@ -3,9 +3,9 @@ import { Box, Container, Grid, Typography } from "@mui/material"
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import YouTubeIcon from '@mui/icons-material/YouTube';
+import { Link } from "react-router-dom";
 // css
 import './footer.scss'
-import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
