@@ -1,7 +1,5 @@
-.form {
-  // background-color: rgb(226, 255, 245);
-  margin: 2rem 1rem;
-  &__container {
+.shippingForm {
+  &--container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,5 +20,12 @@
       border: none;
       border-radius: .2rem;
     }
+  }
+}
+.fetchingForm {
+  padding: .8rem 1rem;
+  .fetchInput {
+    text-align: center;
+    margin: 1rem 0;
   }
 }

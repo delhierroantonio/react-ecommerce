@@ -1,63 +1,174 @@
 import { useState, useEffect } from "react"
-import { Typography, InputLabel, Select, MenuItem, Button, Grid, CircularProgress } from "@mui/material"
-// import { useForm, FormProvider } from "react-hook-form"
+import { Container, Typography, InputLabel, Select, MenuItem, Button, Grid, CircularProgress } from "@mui/material"
+import { useForm } from "react-hook-form";
 import { commerce } from "../../../lib/commerce"
 import { Link } from "react-router-dom"
 // css
 import './addressForm.scss'
 
-const AddressForm = () => {
-  const [error, setError] = useState(false);
+const AddressForm = ({ checkoutToken, next }) => {
+  const [shippingCountries, setShippingCountries] = useState([]);
+  const [shippingCountry, setShippingCountry] = useState('');
 
-  // form state
-  const [name, setName] = useState('');
-  const [lastname, setLastname] = useState('');
-  const [address, setAddress] = useState('');
-  const [email, setEmail] = useState('');
-  const [city, setCity] = useState('');
-  const [zip, setZip] = useState('');
+  const [shippingSubdivisions, setShippingSubdivisions] = useState([]);
+  const [shippingSubdivision, setShippingSubdivision] = useState('');
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    if([name, lastname, address, email, city, zip].includes('')) {
-      setError(true);
-      return;
-    }
-    setError(false);
+  const [shippingOptions, setShippingOptions] = useState([]);
+  const [shippingOption, setShippingOption] = useState('');
+
+  // react hook form
+  const { register, formState: { errors }, handleSubmit } = useForm();
+  const onSubmit = data => console.log(data);
+
+  const countries = Object.entries(shippingCountries).map(([code, name]) => ({ id: code, label: name }));
+  const subdivisions = Object.entries(shippingSubdivisions).map(([code, name]) => ({ id: code, label: name }));
+  const options = shippingOptions.map((sO) => ({ id: sO.id, label: `${sO.description} - (${sO.price.formatted_with_symbol})` }));
+
+  // chec fetch countries
+  const fetchCountries = async (checkoutTokenId) => {
+    const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId);
+    console.log(countries);
+    setShippingCountries(countries);
+    setShippingCountry(Object.keys(countries)[0]);
   }
+
+  const fetchSubdivisions = async (checkoutTokenId, countryCode) => {
+    const { subdivisions } = await commerce.services.localeListShippingSubdivisions(checkoutTokenId, countryCode);
+    console.log(subdivisions);
+    setShippingSubdivisions(subdivisions);
+    setShippingSubdivision(Object.keys(subdivisions)[0]);
+  }
+
+  const fetchOptions = async (checkoutTokenId, country, stateProvince = null) => {
+    const options = await commerce.checkout.getShippingOptions(checkoutTokenId, { country, region: stateProvince });
+    console.log(options);
+    setShippingOptions(options);
+    setShippingOption(options[0].id);
+  }
+
+  useEffect(() => {
+    fetchCountries(checkoutToken.id);
+  }, []);
+
+  useEffect(() => {
+    if (shippingCountry) fetchSubdivisions(checkoutToken.id, shippingCountry);
+  }, [shippingCountry]);
+
+  useEffect(() => {
+    if (shippingSubdivision) fetchOptions(checkoutToken.id, shippingCountry, shippingSubdivision);
+  }, [shippingSubdivision]);
 
   return (
     <>
       <Typography variant="h6" align="center" gutterBottom>Shipping Address</Typography>
-      {error && <Typography sx={{color: 'white', backgroundColor: '#e17272'}} align="center">Todos los campos son obligatorios</Typography>}
-      <form className="form" onSubmit={handleFormSubmit}>
-        <Grid className="form__container" container justifyContent='center' spacing={2}>
+      <form style={{padding: '2rem 0'}} className="shippingForm" onSubmit={handleSubmit((data) => next({...data, shippingCountry, shippingSubdivision, shippingOption}))}>
+        <Grid className="shippingForm--container" container justifyContent='center' spacing={2}>
           <Grid item xs={12} sm={6}>
             <label htmlFor="name">First Name</label>
-            <input type='text' value={name} id="name" placeholder="Your first name" onChange={(e) => setName(e.target.value)}  />
+            {errors.firstName?.type === 'required' && <Typography color='error'>First name is required</Typography>}
+            <input type='text' id="name" placeholder="First name"
+              {...register('firstName', {
+                required: true,
+                minLength: 3,
+                maxLength: 20
+              })}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <label htmlFor="lastName">Last Name</label>
-            <input type='text' value={lastname} id="lastName" placeholder="Your last name" onChange={(e) => setLastname(e.target.value)}  />
+            {errors.lastName?.type === 'required' && <Typography color='error'>Last name is required</Typography>}
+            <input type='text' id="lastName" placeholder="Last name"
+              {...register('lastName', {
+                required: true,
+                minLength: 3,
+                maxLength: 20
+              })}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <label htmlFor="address">Address</label>
-            <input type='text' value={address} id="address" placeholder="Your address" onChange={(e) => setAddress(e.target.value)}  />
+            {errors.address?.type === 'required' && <Typography color='error'>Address is required</Typography>}
+            <input type='text' id="address" placeholder="Address"
+              {...register('address', {
+                required: true,
+              })}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <label htmlFor="email">Email</label>
-            <input type='email' value={email} id="email" placeholder="Your email" onChange={(e) => setEmail(e.target.value)}  />
+            {errors.email?.type === 'required' && <Typography color='error'>Email is required</Typography>}
+            <input type='text' id="email" placeholder="Email"
+              {...register('email', {
+                required: true,
+                minLength: 5,
+                pattern: '^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$'
+              })}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <label htmlFor="city">City</label>
-            <input type='text' value={city} id="city" placeholder="City" onChange={(e) => setCity(e.target.value)}  />
+            {errors.city?.type === 'required' && <Typography color='error'>City name is required</Typography>}
+            <input type='text' id="city" placeholder="City name"
+              {...register('city', {
+                required: true,
+              })}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <label htmlFor="zip">Zip</label>
-            <input type='text' value={zip} id="zip" placeholder="Postal code" onChange={(e) => setZip(e.target.value)}  />
+            <label htmlFor="zip">Zip / Postal code</label>
+            {errors.zip?.type === 'required' && <Typography color='error'>Postal code is required</Typography>}
+            <input type='text' id="zip" placeholder="Zip / Postal"
+              {...register('zip', {
+                required: true,
+              })}
+            />
           </Grid>
         </Grid>
-        <button style={{display: 'block', padding: '.4rem 1rem', margin: '1rem auto', cursor: 'pointer'}} type="submit">Send</button>
+          {/* {(!shippingCountry.length || !shippingSubdivision.length || !shippingOption.length) && <CircularProgress color="inherit" />} */}
+        <Grid sx={{padding: '1rem 0'}} className="fetchingForm" container justifyContent='center' spacing={3}>
+          <Grid item xs={12} sm={12} md={4} lg={3}>
+            <InputLabel className="fetchInput">Shipping Country</InputLabel>
+            <Select
+              value={shippingCountry}
+              label={shippingCountry}
+              fullWidth
+              onChange={(e) => setShippingCountry(e.target.value)}
+            >
+              {countries.map((country) => (
+                <MenuItem key={country.id} value={country.id}>{country.label}</MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={12} sm={12} md={4} lg={3}>
+            <InputLabel className="fetchInput">Shipping Subdivision</InputLabel>
+            <Select
+              value={shippingSubdivision}
+              label={shippingSubdivision}
+              fullWidth
+              onChange={(e) => setShippingSubdivision(e.target.value)}
+            >
+              {subdivisions.map((subdivision) => (
+                <MenuItem key={subdivision.id} value={subdivision.id}>{subdivision.label}</MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={12} sm={12} md={4} lg={3}>
+            <InputLabel className="fetchInput">Shipping Option</InputLabel>
+            <Select
+              value={shippingOption}
+              label={shippingOption}
+              fullWidth
+              onChange={(e) => setShippingSubdivision(e.target.value)}
+            >
+              {options.map((option) => (
+                <MenuItem key={option.id} value={option.id}>{option.label}</MenuItem>
+              ))}
+            </Select>
+          </Grid>
+        </Grid>
+        <Container align='center'>
+          <Button type="submit" variant="contained">Next</Button>
+        </Container>
       </form>
     </>
   )

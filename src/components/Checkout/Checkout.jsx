@@ -7,21 +7,22 @@ import PaymentForm from './PaymentForm/PaymentForm';
 // import PaymentForm from '../PaymentForm'
 // import { commerce } from '../../../lib/commerce'
 
-const Checkout = ({ cart }) => {
+const Checkout = ({ cart, handleCaptureCheckout, order }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [checkoutToken, setCheckoutToken] = useState([]);
+  const [shippingData, setShippingData] = useState({});
+  
   const steps = ['Your Shipping Address', 'Your Payment Details'];
 
-
   useEffect(() => {
-    if(cart.line_items?.length) {
+    if(cart.id) {
       const generateToken = async () => {
         try {
           const token = await commerce.checkout.generateToken(cart.id, { type: 'cart' });
           setCheckoutToken(token);
-          console.log(token);
+          // console.log(token);
         } catch (error) {
-          console.log(error);
+          console.log(`Tu error: ${error}`);
         }
       }
       generateToken();
@@ -36,13 +37,19 @@ const Checkout = ({ cart }) => {
     setActiveStep((prevStep) => prevStep + 1);
   }
 
+  const next = (data) => {
+    console.log(data);
+    setShippingData(data);
+    nextStep();
+  }
+
   const Confirmation = () => (  
     <Typography variant='h4' align='center'>Thanks for your purshase, check your email to see your order details</Typography>
   )
 
   const Form = () => activeStep === 0
-  ? <AddressForm />
-  : <PaymentForm />
+  ? <AddressForm checkoutToken={checkoutToken} next={next} />
+  : <PaymentForm backStep={backStep} nextStep={nextStep} shippingData={shippingData} checkoutToken={checkoutToken} handleCaptureCheckout={handleCaptureCheckout} />
 
   return (
     <main>

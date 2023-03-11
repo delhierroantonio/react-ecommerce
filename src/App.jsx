@@ -7,7 +7,8 @@ import Footer from './Footer/Footer';
 
 function App() {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({});
+  const [order, setOrder] = useState({});
 
   const fetchProducts = async () => {
     const { data } = await commerce.products.list();
@@ -39,10 +40,19 @@ function App() {
     setCart(emptyCart);
   }
 
+  const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
+    try {
+      const incomingOrder = await commerce.checkout.capture(checkoutTokenId, newOrder);
+      setOrder(incomingOrder);
+    } catch (error) {
+      console.log(error.data && error.data.error && error.data.error.message);
+    }
+  }
+
   useEffect(() => {
     fetchProducts();
     fetchCart();
-    console.log(cart);
+    // console.log(cart);
   }, []);
 
   return (
@@ -51,7 +61,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Products products={products} addToCart={handleAddToCart} />} />
         <Route path='/cart' element={<Cart cart={cart} removeFromCart={handleRemoveFromCart} updateQty={handleUpadateCartQty} emptyCart={handleEmptyCart} />} />
-        <Route path='/checkout' element={<Checkout cart={cart} />} />
+        <Route path='/checkout' element={<Checkout cart={cart} handleCaptureCheckout={handleCaptureCheckout} />} />
       </Routes>
       <Footer />
     </BrowserRouter>
