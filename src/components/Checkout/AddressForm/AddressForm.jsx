@@ -6,7 +6,7 @@ import { Link } from "react-router-dom"
 // css
 import './addressForm.scss'
 
-const AddressForm = ({ checkoutToken, next }) => {
+const AddressForm = ({ checkoutToken, next, setShippingCost }) => {
   const [shippingCountries, setShippingCountries] = useState([]);
   const [shippingCountry, setShippingCountry] = useState('');
 
@@ -18,7 +18,7 @@ const AddressForm = ({ checkoutToken, next }) => {
 
   // react hook form
   const { register, formState: { errors }, handleSubmit } = useForm();
-  const onSubmit = data => console.log(data);
+  // const onSubmit = data => console.log(data);
 
   const countries = Object.entries(shippingCountries).map(([code, name]) => ({ id: code, label: name }));
   const subdivisions = Object.entries(shippingSubdivisions).map(([code, name]) => ({ id: code, label: name }));
@@ -27,27 +27,27 @@ const AddressForm = ({ checkoutToken, next }) => {
   // chec fetch countries
   const fetchCountries = async (checkoutTokenId) => {
     const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId);
-    console.log(countries);
+    // console.log(countries);
     setShippingCountries(countries);
     setShippingCountry(Object.keys(countries)[0]);
   }
 
   const fetchSubdivisions = async (checkoutTokenId, countryCode) => {
     const { subdivisions } = await commerce.services.localeListShippingSubdivisions(checkoutTokenId, countryCode);
-    console.log(subdivisions);
+    // console.log(subdivisions);
     setShippingSubdivisions(subdivisions);
     setShippingSubdivision(Object.keys(subdivisions)[0]);
   }
 
   const fetchOptions = async (checkoutTokenId, country, stateProvince = null) => {
     const options = await commerce.checkout.getShippingOptions(checkoutTokenId, { country, region: stateProvince });
-    console.log(options);
+    // console.log(options);
     setShippingOptions(options);
     setShippingOption(options[0].id);
   }
 
   useEffect(() => {
-    fetchCountries(checkoutToken.id);
+    if(checkoutToken) fetchCountries(checkoutToken.id);
   }, []);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const AddressForm = ({ checkoutToken, next }) => {
   return (
     <>
       <Typography variant="h6" align="center" gutterBottom>Shipping Address</Typography>
-      <form style={{padding: '2rem 0'}} className="shippingForm" onSubmit={handleSubmit((data) => next({...data, shippingCountry, shippingSubdivision, shippingOption}))}>
+      <form className="shippingForm" onSubmit={handleSubmit((data) => next({...data, shippingCountry, shippingSubdivision, shippingOption}))}>
         <Grid className="shippingForm--container" container justifyContent='center' spacing={2}>
           <Grid item xs={12} sm={6}>
             <label htmlFor="name">First Name</label>
@@ -123,9 +123,10 @@ const AddressForm = ({ checkoutToken, next }) => {
               })}
             />
           </Grid>
+          <Typography align="center" sx={{color: '#d4a373', margin: '2rem 0 0 0'}} variant="h6">Make sure your information is correct before continuing!</Typography>
         </Grid>
           {/* {(!shippingCountry.length || !shippingSubdivision.length || !shippingOption.length) && <CircularProgress color="inherit" />} */}
-        <Grid sx={{padding: '1rem 0'}} className="fetchingForm" container justifyContent='center' spacing={3}>
+        <Grid sx={{padding: '1rem'}} className="fetchingForm" container justifyContent='center' spacing={3}>
           <Grid item xs={12} sm={12} md={4} lg={3}>
             <InputLabel className="fetchInput">Shipping Country</InputLabel>
             <Select
@@ -158,7 +159,7 @@ const AddressForm = ({ checkoutToken, next }) => {
               value={shippingOption}
               label={shippingOption}
               fullWidth
-              onChange={(e) => setShippingSubdivision(e.target.value)}
+              onChange={(e) => setShippingOption(e.target.value)}
             >
               {options.map((option) => (
                 <MenuItem key={option.id} value={option.id}>{option.label}</MenuItem>
@@ -166,7 +167,8 @@ const AddressForm = ({ checkoutToken, next }) => {
             </Select>
           </Grid>
         </Grid>
-        <Container align='center'>
+        <Container className="shippingForm__btn" align='center'>
+          <Button component={Link} to='/cart' variant="outlined">Back to Cart</Button>
           <Button type="submit" variant="contained">Next</Button>
         </Container>
       </form>

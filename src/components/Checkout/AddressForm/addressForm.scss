@@ -1,4 +1,5 @@
 .shippingForm {
+  padding: 2rem 0;
   &--container {
     display: flex;
     justify-content: center;
@@ -21,11 +22,14 @@
       border-radius: .2rem;
     }
   }
-}
-.fetchingForm {
-  padding: .8rem 1rem;
-  .fetchInput {
-    text-align: center;
-    margin: 1rem 0;
+  .fetchingForm {
+    padding: .8rem 1rem;
+    .fetchInput {
+      text-align: center;
+      margin: 1rem 0;
+    }
+  }
+  &__btn :nth-child(n) {
+    margin: 0 .5rem;
   }
 }
